@@ -1,0 +1,28 @@
+body{
+    background: lightblue;
+    font-family: 'Times New Roman', Times, serif
+}
+div{
+    background-color: darkcyan;
+    margin: 20px;
+    color: white;
+    padding: 10px;
+    border: solid white 2px;
+    text-align: center;
+    border-radius: 4%;
+}
+#title{
+    padding: 40px;
+
+}
+#output{
+    border: none
+}
+
+#convert-btn{
+    border-radius: 5%;
+    background-color: yellow;
+    border: solid black 2px;
+}
+
+
