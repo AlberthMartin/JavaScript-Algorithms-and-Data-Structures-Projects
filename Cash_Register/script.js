@@ -14,6 +14,7 @@ let cid = [
 ];
 //should be provided by input element on page
 let cash = 0;
+let cashBoxStatus = "";
 
 let penny = 0, nickel = 0, dime = 0, quarter = 0, one = 0;
 let five = 0, ten = 0, twenty = 0, oneHundred = 0;
@@ -23,24 +24,22 @@ const purchaseBtn = document.getElementById("purchase-btn");
 const changeDue = document.getElementById("change-due");
 const changeInDrawer = document.getElementById("change-in-drawer")
 
-//initialize change in drawer
+//Update when money is added or taken away
 const changeInDrawerReset = () =>{
   changeInDrawer.innerHTML ="";
   for(let i=0;i<cid.length;i++){
     changeInDrawer.innerHTML+=`<div>${cid[i][0]}: $${cid[i][1].toFixed(2)}</div>`
   }
 }
-const resetChangeDue = () =>{
-  changeDue.innerText="";
-}
 
-changeInDrawerReset()
+//Initialize change in drawer
+changeInDrawerReset();
 
+//Requsion function to go through and count the needed change
 const countChange = (cash) =>{
   if(cash === 0){
     //fullt konverterat
     return;
-
   }
   //Check that the money is in the drawer and that there
   //is more than 100 change left 
@@ -101,45 +100,58 @@ const countChange = (cash) =>{
     cid[0][1]-=0.01
     countChange(cash);
   }
+  //if there is no change left in the drawer and cash still needs to be paid
   else if(cash>0){
+    cashBoxStatus ="INSUFFICIENT_FUNDS"
     return;
   }
 }
-
+//When the purchase button is pressed
 purchaseBtn.addEventListener("click", () => {
-  let InputCash = Number(parseFloat(inputCash.value).toFixed(2)) || 0;
-
+  //The cash recieved from customer
+  let paid = Number(parseFloat(inputCash.value).toFixed(2)) || 0;
+  //If recieved cash is 0 return
+  if(!paid){
+    alert("Enter the cash from customer")
+    return
+  }
 
   // Reset previous change values
   oneHundred = twenty = ten = five = one = quarter = dime = nickel = penny = 0;
   changeDue.innerHTML = ""; // Clear previous change
+  cashBoxStatus = ""; //Clears status
   
-  if(InputCash<price){
+  if(paid<price){
     changeDue.innerHTML = "Customer does not have enough money to purchase the item"
     alert("Customer does not have enough money to purchase the item");
     return;
   }
-  else if(InputCash===price){
+  else if(paid===price){
     changeDue.innerHTML = "No change due - customer paid with exact cash"
     alert("No change due - customer paid with exact cash")
     return;
   }
-  //Logic for counting
-  cash = Number((InputCash-price).toFixed(2));
+  //cash to be returned
+  cash = Number((paid-price).toFixed(2));
 
+  //count the cash in the register
   let totalCash = 0;
   for(let i = 0; i<cid.length;i++){
     totalCash +=cid[i][1];
   }
+  //if there is not enough cash in the register
   if(totalCash<cash){
-    changeDue.innerHTML+="Insufficient funds";
+    changeDue.innerHTML+="Status: INSUFFICIENT_FUNDS"
     return;
   }
+  //Status open 
+  cashBoxStatus = "OPEN"
   //requring counting 
+  //Changes status to INSUFFICIENT_FUNDS if there is not enough of some current
   countChange(cash);
 
+  changeDue.innerHTML+=`Status: ${cashBoxStatus} <br>`
 
-  changeDue.innerHTML+="Status: OPEN <br>"
   if(oneHundred){
     changeDue.innerHTML+=`ONE HUNDRED: $${oneHundred*100}<br>`
   }
